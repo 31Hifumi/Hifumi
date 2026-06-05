@@ -51,9 +51,9 @@ const adapter = process.env.CF_WORKERS
 
 // https://astro.build/config
 export default defineConfig({
-	site: siteConfig.site_url,
+	site: "https://31hifumi.github.io",
 
-	base: "/",
+	base: "/Hifumi/",
 	trailingSlash: "always",
 
 	adapter,

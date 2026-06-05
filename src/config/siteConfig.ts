@@ -13,7 +13,7 @@ export const siteConfig: SiteConfig = {
 	subtitle: "记录日常、摄影与阅读",
 
 	// 站点 URL
-	site_url: "https://hifumi.pages.dev",
+	site_url: "https://31hifumi.github.io/Hifumi/",
 
 	// 站点描述
 	description:
