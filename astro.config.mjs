@@ -53,7 +53,7 @@ const adapter = process.env.CF_WORKERS
 export default defineConfig({
 	site: "https://31hifumi.github.io",
 
-	base: "/Hifumi/",
+	base: "/",
 	trailingSlash: "always",
 
 	adapter,
