@@ -58,7 +58,6 @@ interface Props {
 
 const { config } = Astro.props;
 
-// 构建模型配置
 const models = Array.isArray(config.model) ? config.model : [config.model];
 const resolvePath = (p: string) => (/^https?:\/\//.test(p) ? p : url(p));
 
@@ -71,7 +70,6 @@ const modelConfigs = models.map((m) => ({
 	}),
 }));
 
-// 序列化菜单配置（只保留 icon, label, action）
 function serializeMenus(menus: Props["config"]["menus"]) {
 	if (!menus) return {};
 	const serialize = (items: MenuItem[]) =>
@@ -90,7 +88,7 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 
 <div
 	id="l2d-widget-container"
-	style="position: fixed; z-index: 999;"
+	style="position: fixed; z-index: 999; cursor: grab;"
 	data-models={JSON.stringify(modelConfigs)}
 	data-position={config.position || "bottom-left"}
 	data-size={JSON.stringify(config.size || 300)}
@@ -106,8 +104,6 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 <script>
 	import { createWidget } from "l2d-widget";
 
-	// 修复 l2d-widget 气泡 不会自动换行
-	// l2d-widget 使用行内样式，CSS 无法覆盖，需用 JS 修改
 	function patchTipBubble(el: HTMLElement) {
 		if (el.style.whiteSpace === "nowrap") {
 			el.style.whiteSpace = "normal";
@@ -127,13 +123,12 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 	});
 	tipObserver.observe(document.body, { childList: true, subtree: true });
 
-	// 菜单动作映射
 	let currentModelIndex = 0;
 	const menuActions: Record<string, (widget: any) => void> = {
 		home: () => (window.location.href = "/"),
 		scrollToTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
 		sleep: (widget) => widget.sleep(),
-		github: () => window.open("https://github.com/CuteLeaf/Firefly", "_blank"),
+		github: () => window.open("https://github.com/31Hifumi/Hifumi", "_blank"),
 		switchModel: (widget) => {
 			const container = document.getElementById("l2d-widget-container");
 			const models = JSON.parse(container?.dataset.models || "[]");
@@ -141,6 +136,93 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 			widget.switchModel(currentModelIndex);
 		},
 	};
+
+	function setupInteractions(container: HTMLElement, widget: any) {
+		// 等 l2d-widget 创建完 canvas
+		const trySetup = () => {
+			const canvas = container.querySelector("canvas");
+			if (!canvas) { setTimeout(trySetup, 300); return; }
+
+			// 恢复拖拽位置
+			try {
+				const s = localStorage.getItem("l2d-position");
+				if (s) {
+					const { left, top } = JSON.parse(s);
+					container.style.left = left + "px";
+					container.style.top = top + "px";
+					container.style.right = "auto";
+					container.style.bottom = "auto";
+				}
+			} catch (_) {}
+
+			let isDragging = false, hasMoved = false;
+			let sx = 0, sy = 0, il = 0, it = 0;
+			const TH = 5;
+
+			function save() {
+				const r = container.getBoundingClientRect();
+				localStorage.setItem("l2d-position", JSON.stringify({ left: r.left, top: r.top }));
+			}
+
+			function isHead(e: PointerEvent) {
+				const r = canvas!.getBoundingClientRect();
+				return (e.clientY - r.top) < r.height * 0.35;
+			}
+
+			const headMsgs = ["うぅ…頭を撫でるな！", "やめなさいってば！", "あっ！そこはダメ！", "もぅ…バカ！"];
+			const bodyMsgs = ["おじさんだよ～", "先生、何か用？", "ふぁ～眠い…", "ん？どうしたの？"];
+
+			// 用 capture: true 在 document 层级拦截事件
+			document.addEventListener("pointerdown", (e) => {
+				if (!container.contains(e.target as Node)) return;
+				if (e.pointerType === "mouse" && e.button !== 0) return;
+				isDragging = true; hasMoved = false;
+				sx = e.clientX; sy = e.clientY;
+				const r = container.getBoundingClientRect();
+				il = r.left; it = r.top;
+				container.style.cursor = "grabbing";
+				container.style.transition = "none";
+				container.setPointerCapture?.(e.pointerId);
+			}, true);
+
+			document.addEventListener("pointermove", (e) => {
+				if (!isDragging) return;
+				const dx = e.clientX - sx, dy = e.clientY - sy;
+				if (Math.abs(dx) > TH || Math.abs(dy) > TH) hasMoved = true;
+				container.style.right = "auto";
+				container.style.bottom = "auto";
+				container.style.left = (il + dx) + "px";
+				container.style.top = (it + dy) + "px";
+			}, true);
+
+			document.addEventListener("pointerup", (e) => {
+				if (!isDragging) return;
+				isDragging = false;
+				container.style.cursor = "grab";
+				container.style.transition = "";
+				if (hasMoved) { save(); }
+				else {
+					const head = isHead(e);
+					const pool = head ? headMsgs : bodyMsgs;
+					const msg = pool[Math.floor(Math.random() * pool.length)];
+					if ((window as any).showModelMessage) {
+						(window as any).showModelMessage(msg, { displayTime: 2500 });
+					}
+				}
+				container.releasePointerCapture?.(e.pointerId);
+			}, true);
+
+			document.addEventListener("pointercancel", () => {
+				isDragging = false;
+				container.style.cursor = "grab";
+				container.style.transition = "";
+			}, true);
+
+			console.log("[Live2D] Interactions ready — drag + click enabled");
+		};
+
+		trySetup();
+	}
 
 	function initWidget() {
 		const container = document.getElementById("l2d-widget-container");
@@ -159,7 +241,6 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 			const tips = JSON.parse(container.dataset.tips || "{}");
 			const responsive = JSON.parse(container.dataset.responsive || "{}");
 
-			// 响应式检查：移动端隐藏
 			if (responsive.hideOnMobile) {
 				const breakpoint = responsive.mobileBreakpoint || 768;
 				if (window.innerWidth <= breakpoint) {
@@ -183,7 +264,6 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 			if (transitionDuration) options.transitionDuration = transitionDuration;
 			if (transitionType) options.transitionType = transitionType;
 
-			// 菜单配置 - 将 action 字符串映射为实际函数
 			if (menus.items || (menus.extraItems && menus.extraItems.length > 0)) {
 				options.menus = {};
 				if (menus.items) {
@@ -200,12 +280,9 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 						onClick: menuActions[item.action] || (() => {}),
 					}));
 				}
-				if (menus.align) {
-					options.menus.align = menus.align;
-				}
+				if (menus.align) options.menus.align = menus.align;
 			}
 
-			// 提示配置
 			if (tips) {
 				const tipsConfig = tips.enable === false ? false : {
 					...(tips.welcomeMessage && { welcomeMessage: tips.welcomeMessage }),
@@ -215,7 +292,6 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 					...(tips.offset && { offset: tips.offset }),
 					...(tips.typing && { typing: tips.typing }),
 				};
-				
 				if (tipsConfig === false || Object.keys(tipsConfig).length > 0) {
 					if (Array.isArray(options.model)) {
 						options.model.forEach((m: any) => m.tips = tipsConfig);
@@ -225,32 +301,26 @@ function serializeMenus(menus: Props["config"]["menus"]) {
 				}
 			}
 
-			createWidget(options);
+			const widget = createWidget(options);
+			setupInteractions(container, widget);
 		} catch (e) {
 			console.error("Failed to initialize Live2D widget:", e);
 		}
 	}
 
-	// 确保只初始化一次
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", initWidget);
 	} else {
 		initWidget();
 	}
 
-	// 响应式处理：窗口大小变化时显示/隐藏
 	function handleResponsive() {
 		const container = document.getElementById("l2d-widget-container");
 		if (!container) return;
-
 		const responsive = JSON.parse(container.dataset.responsive || "{}");
 		if (responsive.hideOnMobile) {
 			const breakpoint = responsive.mobileBreakpoint || 768;
-			if (window.innerWidth <= breakpoint) {
-				container.style.display = "none";
-			} else {
-				container.style.display = "";
-			}
+			container.style.display = window.innerWidth <= breakpoint ? "none" : "";
 		}
 	}
 
