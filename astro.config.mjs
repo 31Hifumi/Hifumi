@@ -51,7 +51,7 @@ const adapter = process.env.CF_WORKERS
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://31hifumi.github.io",
+	site: "https://rainbow-faun-87f4bc.netlify.app",
 
 	base: "/",
 	trailingSlash: "always",

@@ -10,14 +10,14 @@ export const siteConfig: SiteConfig = {
 	title: "Hifumi",
 
 	// 站点副标题
-	subtitle: "记录日常、摄影与阅读",
+	subtitle: "记录日常",
 
 	// 站点 URL
-	site_url: "https://31hifumi.github.io/Hifumi/",
+	site_url: "https://rainbow-faun-87f4bc.netlify.app/",
 
 	// 站点描述
 	description:
-		"记录日常、摄影与阅读的个人空间。",
+		"记录日常的个人空间。",
 
 	// 站点关键词
 	keywords: [
@@ -73,8 +73,8 @@ export const siteConfig: SiteConfig = {
 		// 4. 网络图片: { type: "url", value: "https://example.com/logo.png", alt: "Logo" }
 		logo: {
 			type: "image",
-			value: "assets/images/firefly.png",
-			alt: "🍀",
+			value: "assets/images/logo.png",
+			alt: "Hifumi",
 		},
 		// 导航栏标题
 		title: "Hifumi",

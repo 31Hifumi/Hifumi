@@ -11,7 +11,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	showInNavbar: true,
 
 	// 使用方式："meting" 使用 Meting API，"local" 使用本地音乐列表
-	mode: "meting",
+	mode: "local",
 
 	// 默认音量 (0-1)
 	volume: 0.7,
@@ -50,10 +50,52 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	local: {
 		playlist: [
 			{
+				name: "Travel",
+				artist: "T-Chenxi",
+				url: "/assets/music/Travel - T-Chenxi.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
+				name: "ふわふわ♪",
+				artist: "高桥千春",
+				url: "/assets/music/ふわふわ♪ - 高桥千春.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
 				name: "使一颗心免于哀伤",
 				artist: "知更鸟 / HOYO-MiX / Chevy",
-				url: "/assets/music/使一颗心免于哀伤-哼唱.mp3",
-				cover: "/assets/music/cover/109951169585655912.webp",
+				url: "/assets/music/使一颗心免于哀伤 - 知更鸟 _ HOYO-MiX _ Chevy.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
+				name: "希望有羽毛和翅膀",
+				artist: "知更鸟 / HOYO-MiX / Chevy",
+				url: "/assets/music/希望有羽毛和翅膀 - 知更鸟 _ HOYO-MiX _ Chevy.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
+				name: "我不曾忘记",
+				artist: "花玲 / 张安琪 / 沐霏",
+				url: "/assets/music/我不曾忘记 - 花玲 _ 张安琪 _ 沐霏.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
+				name: "小白",
+				artist: "周柏豪",
+				url: "/assets/music/小白 - 周柏豪.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
+				lrc: "",
+			},
+			{
+				name: "情歌",
+				artist: "梁静茹",
+				url: "/assets/music/情歌 - 梁静茹.flac",
+				cover: "/assets/music/cover/1755258354708_1755258803885.png",
 				lrc: "",
 			},
 		],
