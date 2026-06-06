@@ -88,14 +88,6 @@ export const live2dWidgetConfig: Live2DWidgetConfig = {
 	enable: true,
 	// 模型配置，支持单个模型或数组（多模型切换）
 	model: [
-			{
-				path: "/pio/models/live2d/nahida/Nahida_1080/Nahida_1080.model3.json",
-				volume: 0,
-				scale: 1,
-				x: 0,
-				y: 0,
-			},
-
 		{
 			// Live2D模型本地文件路径
 			path: "/pio/models/live2d/hoshino/星野.model3.json",
@@ -106,6 +98,13 @@ export const live2dWidgetConfig: Live2DWidgetConfig = {
 			// X轴偏移，范围 -2~2，正值向右
 			x: 0,
 			// Y轴偏移，范围 -2~2，正值向上
+			y: 0,
+		},
+		{
+			path: "/pio/models/live2d/nahida/Nahida_1080/Nahida_1080.model3.json",
+			volume: 0,
+			scale: 1,
+			x: 0,
 			y: 0,
 		},
 	],
